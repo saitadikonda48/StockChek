@@ -880,7 +880,7 @@ def barchart(request):
 			pass
 		arr_len = len(int_percents)
 		for percentage in int_percents:
-			if percentage > 89:
+			if percentage > 84:
 				arr_len = arr_len - 1
 		if arr_len == 0:
 			change = str(percents[3].text)
