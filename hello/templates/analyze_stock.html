@@ -1,0 +1,751 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+<style>
+{% block style %}
+	.main_box{
+	    background-color: #0047b3;
+	    background-image: url("http://www.transparenttextures.com/patterns/cubes.png");
+		height:800px;
+		border-style:outset;
+		border-color: black;
+		border-top: 0;
+		overflow-y:scroll;
+	}
+	
+	.analysis_box{
+		background-color:darkblue;
+		border-style:groove;
+		border-color: black;
+		height:50px;
+	}
+	.analysis_box:hover{
+		background: radial-gradient(circle, #81DAF5, #58ACFA, #084B8A); 
+	}
+	.analysis_titles{
+		color:white;
+		text-align: center;
+		font-family: Lucida;
+		font-size: 215%;
+	}
+	.stat_titles{
+		font-size: large;
+		color:white;
+		text-align: center;
+		padding-top: 5px;
+	}
+	.table-header{
+		height:40px;
+		background: green; /* For browsers that do not support gradients */
+	    background: -webkit-linear-gradient(left top, green, lightgreen); /* For Safari 5.1 to 6.0 */
+	    background: -o-linear-gradient(bottom right, green, lightgreen); /* For Opera 11.1 to 12.0 */
+	    background: -moz-linear-gradient(bottom right, green, lightgreen); /* For Firefox 3.6 to 15 */
+	    background: linear-gradient(to bottom right, green, lightgreen); /* Standard syntax (must be last) */
+	}
+	table {
+		border-collapse: collapse;
+	    width: 100%;
+	}
+
+	th, td {
+	    text-align: center;
+	    padding: 8px;
+	    color: black;
+	}
+
+	tr{
+		background-color: white;
+	}
+
+	th {
+	    background-color: lightgray;
+	    
+	}
+	.modal-content{
+		background: darkblue;
+	    background: -webkit-linear-gradient(left top, darkblue, blue);
+	    background: -o-linear-gradient(bottom right, darkblue, blue);
+	    background: -moz-linear-gradient(bottom right, darkblue, blue);
+	    background: linear-gradient(to bottom right, darkblue, blue);
+		color:white;
+	}
+	.headline_articles{
+		background-color:gray;
+		-webkit-transition: background 0.5s linear;
+	    -moz-transition: background 0.5s linear;
+	    -ms-transition: background 0.5s linear;
+	    -o-transition: background 0.5s linear;
+	    transition: background 0.5s linear;
+		color:white;
+	}
+	.headline_articles:hover{
+		background-color: white;
+		color:blue;
+	}
+
+{% endblock %}
+</style>
+
+<script>
+{% block jquery %}
+
+	$(".clickable-row").click(function() {
+        window.document.location = $(this).data("href");
+    });
+	$('#news_main_box').hide();
+	$('#tech_main_box').hide();
+	$("#tech_box").click(function(){
+	  $('#fund_main_box').fadeOut()
+	  $('#news_main_box').fadeOut()
+	  $('#tech_main_box').fadeIn()
+	});
+	$("#fund_box").click(function(){
+	  $('#tech_main_box').fadeOut()
+	  $('#news_main_box').fadeOut()
+	  $('#fund_main_box').fadeIn()
+	});
+	$("#news_box").click(function(){
+	  $('#tech_main_box').fadeOut()
+	  $('#fund_main_box').fadeOut()
+	  $('#news_main_box').fadeIn()
+	});
+	$("#fund_modal").click(function(){
+		$("#topic").html("Fundamental Analysis")
+		$(".modal-equation").html("")
+		$(".modal-info").html("Fundamental analysis is a method of evaluating a security in an attempt to measure its intrinsic value, by examining related economic, financial and other qualitative and quantitative factors. This involves going through the company's financial statements and scouring data to determine the company's historical success/failure. Below, are ratios that each have their own purpose in helping the investor learn more about the company. \n Before investing in a company you should guage the health of the industry itself. If a company is selling a product that may soon become obsolete then buying than you should stay away from company's in that industry. \n Also make sure you check out how a company's competitors are doing. For example, if you are interested in investing Verizon you should also research AT&T and Sprint before coming to a conclusion.")
+	});
+	$("#gm_modal").click(function(){
+		$("#topic").html("Gross Margin Ratio")
+		$(".modal-equation").html("Gross Margin Ratio = Gross Profit ÷ Net Sales")
+		$(".modal-info").html("The Gross Margin Ratio shows how well a company uses it production, purchasing and redistribution resources to earn a profit. The higher the percentage the higher the profit per sale. You should compare this to other companies in the same industry.")
+	});
+	$("#gpe_modal").click(function(){
+		$("#topic").html("GP/E Ratio")
+		$(".modal-equation").html("GP/E Ratio = Gross Profit ÷ Sales, General and Admin. Expense")
+		$(".modal-info").html("The GP/E ratio shows how well a company is controlling its costs. An increasing GP/E shows that the company has a good cost-control program in place.")
+	});
+	$("#int_cov_modal").click(function(){
+		$("#topic").html("Interest Coverage Ratio")
+		$(".modal-equation").html("Interest Coverage Ratio = EBIT ÷ Interest Expense")
+		$(".modal-info").html("The Interest Coverage Ratio allows you to determine whether the company is generating enough income to pay its interest payments. An Interest Coverage below 3 is not good.")
+	});
+	$("#om_modal").click(function(){
+		$("#topic").html("Operating Margin")
+		$(".modal-equation").html("Operating Margin = Operating Income ÷ Gross Profit")
+		$(".modal-info").html("The operating margin helps you determine the company's profitability before interest and tax expenses.")
+	});
+	$("#np_modal").click(function(){
+		$("#topic").html("Net Profit Margin")
+		$(".modal-equation").html("Net Profit Margin = Earnings after taxes ÷ Gross Profit")
+		$(".modal-info").html("The net profit margin helps you determine the company's profitability after interest and tax expenses.")
+	});
+    $("#cfo_modal").click(function(){
+		$("#topic").html("Cash Flow (Operating Activities)")
+		$(".modal-equation").html("")
+		$(".modal-info").html("This section of the cash-flow.")
+	});
+	$("#cff_modal").click(function(){
+		$("#topic").html("Cash Flow (Financing Activities)")
+		$(".modal-equation").html("")
+		$(".modal-info").html("Financing Activities.")
+	});
+	$("#cfi_modal").click(function(){
+		$("#topic").html("Cash Flow (Investing Activities)")
+		$(".modal-equation").html("")
+		$(".modal-info").html("This shows how much cash has been flowing into investment activities. You can expect these values to be negative.")
+	});
+	$("#inv_turn_modal").click(function(){
+		$("#topic").html("Inventory Turnover Ratio")
+		$(".modal-equation").html("Inventory Turnover Ratio = Cost of Goods Sold ÷ Inventory Balance")
+		$(".modal-info").html("The inventory turnover ratio will give you the average number of days it takes a company to use its inventory.")
+	});
+	$("#curr_modal").click(function(){
+		$("#topic").html("Current Ratio")
+		$(".modal-equation").html("Current Ratio = Current Assets ÷ Current Liabilities")
+		$(".modal-info").html("The current ratio tests if a company can make its payments.")
+	});
+	$("#quick_modal").click(function(){
+		$("#topic").html("Quick Ratio")
+		$(".modal-equation").html("Quick Ratio = (Current Assets - Inventory) ÷ Current Liabilites")
+		$(".modal-info").html("The quick ratio tests if a company can make its SHORT TERM payments. If a company has a quick ratio less than 1 it may have trouble getting loans.")
+	});
+	$("#pe_modal").click(function(){
+		$("#topic").html("Price to Earnings Ratio")
+		$(".modal-equation").html("P/E = Stock Price ÷ Earnings per share")
+		$(".modal-info").html("The price to earnings ratio is a comparison of a stock's earnings to its share price. This is a good representation of how the market values the stock. A P/E ratio anywhere between 10 to 15 is preferable.")
+	});
+	$("#pb_modal").click(function(){
+		$("#topic").html("Price to Book Ratio")
+		$(".modal-equation").html("Price/Book ratio = Stock Price ÷ (Book value - Total liabilities)")
+		$(".modal-info").html("The price/book ratio compares the market's valuation of a company to the value the company shows on its financial statements.")
+	});
+	$("#roa_modal").click(function(){
+		$("#topic").html("Return on Assets")
+		$(".modal-equation").html("Return on assets = Earnings after taxes ÷ Total assets")
+		$(".modal-info").html("The return on assets value shows how efficiently the company's management is utilizing the company's resources.")
+	});
+	$("#roe_modal").click(function(){
+		$("#topic").html("Return on Equity")
+		$(".modal-equation").html("Return on equity = Earnings after taxes ÷ Shareholder Equity")
+		$(".modal-info").html("The return on equity measures how well the company is doing for its shareholders.")
+	});
+	$("#comp_info_modal").click(function(){
+		$("#topic").html("Company Related News")
+		$(".modal-equation").html("Press Releases vs Company Headlines")
+		$(".modal-info").html('Sometimes a company may release information just to bolster investor confidence. Sometimes a source of media will lie, exaggerate, or make silly claims because of either personal beliefs or because they are "financially incentivized" to do so. \n All in all, it is important to view press releases and company headlines only as a supplement to your own analysis. Learn more about the product of the company and what makes it better than its competition.')
+	});
+	$("#insiders_info_modal").click(function(){
+		$("#topic").html("Insiders and Analysts")
+		$(".modal-equation").html("Insider Trading and Analyst Opinion")
+		$(".modal-info").html("Insider Trading is when members of the company (Executives) buy and sell stock. If they are buying a lot of stock it shows they have confidence in the future of their company. If company executives are selling a lot of shares MIGHT indicate that they do not have confidence in the company's future. \n You MUST perform your own analysis. Do not blindly follow analysts but in most cases looking at the consensus of analyst opinions can act as a valuable component to overall analysis of the company.")
+	});
+{% endblock %}
+</script>
+
+{% block page_title %}Analyze Stock{% endblock %}
+{% block content %}
+
+  <!-- Modal (Change the text up Maybe typewriter)-->
+  <div class="modal fade" id="info_modal" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" >&times;</button>
+          <p class="lead text-align-center" id="topic" style="color:yellow;">Topic</p>
+        </div>
+        <div class="modal-body">
+          <p class = "lead modal-equation text-align-center"></p>
+          <p class = "lead modal-info"></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger btn-block" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<h1 class="text-align-center" >Analyze Stock &emsp;</h1><hr>
+<div class="row">
+	<div class="text-align-center" style='display:inline;'>
+		<form method="POST" class ="form-inline" action="">{% csrf_token %}
+		<p class='lead'>Choose a Company </p>{{stockChoiceForm|crispy}}
+		<input class='btn btn-danger' type='submit' value='Search'/>
+		</form>
+	</div>
+</div>
+<br>
+<div class="row">
+	<div class="col-sm-4 analysis_box" id="fund_box">
+		<p class='analysis_titles'>Fundamental &emsp;<button type="button" id="fund_modal" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#info_modal"><i class="fa fa-info " aria-hidden="true"></i></button></p>
+	</div>
+	<div class="col-sm-4 analysis_box" id="news_box">
+		<p class='analysis_titles'>Company Related News&emsp;<button type="button" id="comp_info_modal" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#info_modal"><i class="fa fa-info" aria-hidden="true"></i></button></p>
+	</div>
+	<div class="col-sm-4 analysis_box" id="tech_box">
+		<p class='analysis_titles'>Insiders and Analysts &emsp;<button type="button" id="insiders_info_modal" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#info_modal"><i class="fa fa-info" aria-hidden="true"></i></button></p>
+	</div>
+</div>
+<div class="row">
+	<div class="col-sm-12  main_box" id="fund_main_box">
+		<h2 class='text-align-center lead'><p style="color:white;display:inline;">{{stock_choice_made}}</p>
+			{% if '+' in daily_change %}
+			<p style="color:lightgreen;display:inline;">&nbsp;{{price}} &nbsp;&nbsp;{{daily_change}}</p>
+			{% else %}
+			<p style="color:red;display:inline;">&nbsp;{{price}} &nbsp;&nbsp;{{daily_change}}</p>
+			{% endif %}
+			&emsp;&emsp;&emsp;&emsp;&emsp;<p style="color:yellow;display:inline;">Competitors:
+				{% for name in competitors %}
+					{% if forloop.counter != 1 %}
+						&nbsp;{{name}}
+					{% else %}
+						{{name}}
+					{% endif %}
+				{% endfor %}
+			</p>
+		</h2>
+		<hr>
+		
+		{% if dates.2 %}
+		<!-- First Row Info -->
+		<div class="row">
+			<!-- Gross Marigin Ratio -->
+			<div class='col-sm-4 '>
+				<div class="table-header stat_titles">
+					<p>Gross Margin Ratio&emsp;<button type="button" id="gm_modal" class="btn btn-info btn-sm" data-toggle="modal" data-target="#info_modal"><i class="fa fa-info " aria-hidden="true"></i></button></p>
+				</div>
+				<div>
+					<table class="table">
+					  <tr>
+					    <th>{{dates.0}}</th>
+					    <th>{{dates.1}}</th>
+					    <th>{{dates.2}}</th>
+					    <th>{{dates.3}}</th>
+					  </tr>
+					  <tr>
+					    <td>{{gross_margin_ratios.0}}%</td>
+					    <td>{{gross_margin_ratios.1}}%</td>
+					    <td>{{gross_margin_ratios.2}}%</td>
+					    {% if gross_margin_ratios.3%}
+						    <td>{{gross_margin_ratios.3}}%</td>
+						{% else %}
+							<td></td>
+						{% endif %}
+					  </tr>
+					</table>			
+				</div>
+			</div>
+
+			<!-- GP/E Ratio -->
+			<div class='col-sm-4 '>
+				<div class="table-header stat_titles">
+					<p>GP/E Ratio&emsp;<button type="button" id="gpe_modal" class="btn btn-info btn-sm" data-toggle="modal" data-target="#info_modal"><i class="fa fa-info " aria-hidden="true"></i></button></p>
+				</div>
+				<div>
+					<table class="table">
+					  <tr>
+					    <th>{{dates.0}}</th>
+					    <th>{{dates.1}}</th>
+					    <th>{{dates.2}}</th>
+					    <th>{{dates.3}}</th>
+					  </tr>
+					  <tr>
+					    <td>{{gp_e_ratios.0}}</td>
+					    <td>{{gp_e_ratios.1}}</td>
+					    <td>{{gp_e_ratios.2}}</td>
+					    <td>{{gp_e_ratios.3}}</td>
+					  </tr>
+					</table>			
+				</div>
+			</div>
+
+			<!-- Interest Coverage Ratio -->
+			<div class='col-sm-4 '>
+				<div class="table-header stat_titles">
+					<p>Interest Coverage Ratio&emsp;<button type="button" id="int_cov_modal" class="btn btn-info btn-sm" data-toggle="modal" data-target="#info_modal"><i class="fa fa-info " aria-hidden="true"></i></button></p>
+				</div>
+				<div>
+					<table class="table">
+					  <tr>
+					    <th>{{dates.0}}</th>
+					    <th>{{dates.1}}</th>
+					    <th>{{dates.2}}</th>
+					    <th>{{dates.3}}</th>
+					  </tr>
+					  <tr>
+					    <td>{{interest_coverage_ratios.0}}</td>
+					    <td>{{interest_coverage_ratios.1}}</td>
+					    <td>{{interest_coverage_ratios.2}}</td>
+					    <td>{{interest_coverage_ratios.3}}</td>
+					  </tr>
+					</table>			
+				</div>
+			</div>
+		</div>
+		<br>
+
+		<!-- Second Row Info -->
+		<div class="row">
+			<!-- Operating Margin -->
+			<div class='col-sm-4 '>
+				<div class="table-header stat_titles">
+					<p>Operating Margin&emsp;<button type="button" id="om_modal" class="btn btn-info btn-sm" data-toggle="modal" data-target="#info_modal"><i class="fa fa-info " aria-hidden="true"></i></button></p>
+				</div>
+				<div>
+					<table class="table">
+					  <tr>
+					    <th>{{dates.0}}</th>
+					    <th>{{dates.1}}</th>
+					    <th>{{dates.2}}</th>
+					    <th>{{dates.3}}</th>
+					  </tr>
+					  <tr>
+					    <td>{{operating_margins.0}}%</td>
+					    <td>{{operating_margins.1}}%</td>
+					    <td>{{operating_margins.2}}%</td>
+					    <td>{{operating_margins.3}}%</td>
+					  </tr>
+					</table>			
+				</div>
+			</div>
+
+			<!-- Net Profit Margin -->
+			<div class='col-sm-4 '>
+				<div class="table-header stat_titles">
+					<p>Net Profit Margin&emsp;<button type="button" id="np_modal" class="btn btn-info btn-sm" data-toggle="modal" data-target="#info_modal"><i class="fa fa-info " aria-hidden="true"></i></button></p>
+				</div>
+				<div>
+					<table class="table">
+					  <tr>
+					    <th>{{dates.0}}</th>
+					    <th>{{dates.1}}</th>
+					    <th>{{dates.2}}</th>
+					    <th>{{dates.3}}</th>
+					  </tr>
+					  <tr>
+					    <td>{{net_profit_margins.0}}%</td>
+					    <td>{{net_profit_margins.1}}%</td>
+					    <td>{{net_profit_margins.2}}%</td>
+					    <td>{{net_profit_margins.3}}%</td>
+					  </tr>
+					</table>			
+				</div>
+			</div>
+
+			<!-- Inventory Turnover Ratio -->
+			<div class='col-sm-4 '>
+				<div class="table-header stat_titles">
+					<p>Inventory Turnover Ratio&emsp;<button type="button" id="inv_turn_modal" class="btn btn-info btn-sm" data-toggle="modal" data-target="#info_modal"><i class="fa fa-info " aria-hidden="true"></i></button></p>
+				</div>
+				<div>
+					<table class="table">
+					  <tr>
+					    <th>{{dates.0}}</th>
+					    <th>{{dates.1}}</th>
+					    <th>{{dates.2}}</th>
+					    <th>{{dates.3}}</th>
+					  </tr>
+					  <tr>
+					    <td>{{inventory_turnover_ratios.0}}</td>
+					    <td>{{inventory_turnover_ratios.1}}</td>
+					    <td>{{inventory_turnover_ratios.2}}</td>
+					    <td>{{inventory_turnover_ratios.3}}</td>
+					  </tr>
+					</table>			
+				</div>
+			</div>
+		</div>
+		<br>
+
+		<!-- Third Row Info -->
+		<div class="row">
+			<!-- Current Ratio -->
+			<div class='col-sm-4 '>
+				<div class="table-header stat_titles">
+					<p>Current Ratio&emsp;<button type="button" id="curr_modal" class="btn btn-info btn-sm" data-toggle="modal" data-target="#info_modal"><i class="fa fa-info " aria-hidden="true"></i></button></p>
+				</div>
+				<div>
+					<table class="table">
+					  <tr>
+					    <th>{{dates.0}}</th>
+					    <th>{{dates.1}}</th>
+					    <th>{{dates.2}}</th>
+					    <th>{{dates.3}}</th>
+					  </tr>
+					  <tr>
+					    <td>{{current_ratios.0}}</td>
+					    <td>{{current_ratios.1}}</td>
+					    <td>{{current_ratios.2}}</td>
+					    <td>{{current_ratios.3}}</td>
+					  </tr>
+					</table>			
+				</div>
+			</div>
+
+			<!-- Quick Ratio -->
+			<div class='col-sm-4 '>
+				<div class="table-header stat_titles">
+					<p>Quick Ratio&emsp;<button type="button" id="quick_modal" class="btn btn-info btn-sm" data-toggle="modal" data-target="#info_modal"><i class="fa fa-info " aria-hidden="true"></i></button></p>
+				</div>
+				<div>
+					<table class="table">
+					  <tr>
+					    <th>{{dates.0}}</th>
+					    <th>{{dates.1}}</th>
+					    <th>{{dates.2}}</th>
+					    <th>{{dates.3}}</th>
+					  </tr>
+					  <tr>
+					    <td>{{quick_ratios.0}}</td>
+					    <td>{{quick_ratios.1}}</td>
+					    <td>{{quick_ratios.2}}</td>
+					    <td>{{quick_ratios.3}}</td>
+					  </tr>
+					</table>			
+				</div>
+			</div>
+
+			<!-- P/E Ratio -->
+			<div class='col-sm-4 '>
+				<div class="table-header stat_titles">
+					<p>P/E Ratio&emsp;<button type="button" id="pe_modal" class="btn btn-info btn-sm" data-toggle="modal" data-target="#info_modal"><i class="fa fa-info " aria-hidden="true"></i></button></p>
+				</div>
+				<div>
+					<table class="table">
+					  <tr>
+					    <th>{{pe_date}}</th>
+					  </tr>
+					  <tr>
+					    <td>{{pe_stat}}</td>
+					  </tr>
+					</table>			
+				</div>
+			</div>
+		</div>
+		<br>
+		<!-- Fourth Row Info -->
+		<div class="row">
+			<!-- Price/Book Ratio -->
+			<div class='col-sm-4 '>
+				<div class="table-header stat_titles">
+					<p>Price/Book Ratio&emsp;<button type="button" id="pb_modal" class="btn btn-info btn-sm" data-toggle="modal" data-target="#info_modal"><i class="fa fa-info " aria-hidden="true"></i></button></p>
+				</div>
+				<div>
+					<table class="table">
+					  <tr>
+					    <th>{{pb_date}}</th>
+					  </tr>
+					  <tr>
+					    <td>{{pb_stat}}</td>
+					  </tr>
+					</table>			
+				</div>
+			</div>
+
+			<!-- Return On Assets -->
+			<div class='col-sm-4 '>
+				<div class="table-header stat_titles">
+					<p>Return On Assets&emsp;<button type="button" id="roa_modal" class="btn btn-info btn-sm" data-toggle="modal" data-target="#info_modal"><i class="fa fa-info " aria-hidden="true"></i></button></p>
+				</div>
+				<div>
+					<table class="table">
+					  <tr>
+					    <th>{{dates.0}}</th>
+					    <th>{{dates.1}}</th>
+					    <th>{{dates.2}}</th>
+					    <th>{{dates.3}}</th>
+					  </tr>
+					  <tr>
+					    <td>{{return_on_assets.0}}%</td>
+					    <td>{{return_on_assets.1}}%</td>
+					    <td>{{return_on_assets.2}}%</td>
+					    <td>{{return_on_assets.3}}%</td>
+					  </tr>
+					</table>			
+				</div>
+			</div>
+
+			<!-- Return On Equity -->
+			<div class='col-sm-4 '>
+				<div class="table-header stat_titles">
+					<p>Return On Equity&emsp;<button type="button" id="roe_modal" class="btn btn-info btn-sm" data-toggle="modal" data-target="#info_modal"><i class="fa fa-info " aria-hidden="true"></i></button></p>
+				</div>
+				<div>
+					<table class="table">
+					  <tr>
+					    <th>{{dates.0}}</th>
+					    <th>{{dates.1}}</th>
+					    <th>{{dates.2}}</th>
+					    <th>{{dates.3}}</th>
+					  </tr>
+					  <tr>
+					    <td>{{return_on_equities.0}}%</td>
+					    <td>{{return_on_equities.1}}%</td>
+					    <td>{{return_on_equities.2}}%</td>
+					    <td>{{return_on_equities.3}}%</td>
+					  </tr>
+					</table>			
+				</div>
+			</div>
+		</div>
+		<br>
+
+		<!-- Fifth Row Info -->
+		<div class="row">
+			<!-- Cash Flow (Operating Activities) -->
+			<div class='col-sm-4 '>
+				<div class="table-header stat_titles">
+					<p>Cash Flow (Operating Activities)&emsp;<button type="button" id="cfo_modal" class="btn btn-info btn-sm" data-toggle="modal" data-target="#info_modal"><i class="fa fa-info " aria-hidden="true"></i></button></p>
+				</div>
+				<div>
+					<table class="table">
+					  <tr>
+					    <th>{{dates.0}}</th>
+					    <th>{{dates.1}}</th>
+					    <th>{{dates.2}}</th>
+					    <th>{{dates.3}}</th>
+					  </tr>
+					  <tr>
+					    <td>{{operating_activities.0}}</td>
+					    <td>{{operating_activities.1}}</td>
+					    <td>{{operating_activities.2}}</td>
+					    <td>{{operating_activities.3}}</td>
+					  </tr>
+					</table>			
+				</div>
+			</div>
+
+			<!-- Cash Flow (Financing Activities) -->
+			<div class='col-sm-4 '>
+				<div class="table-header stat_titles">
+					<p>Cash Flow (Financing Activities)&emsp;<button type="button" id="cff_modal" class="btn btn-info btn-sm" data-toggle="modal" data-target="#info_modal"><i class="fa fa-info " aria-hidden="true"></i></button></p>
+				</div>
+				<div>
+					<table class="table">
+					  <tr>
+					    <th>{{dates.0}}</th>
+					    <th>{{dates.1}}</th>
+					    <th>{{dates.2}}</th>
+					    <th>{{dates.3}}</th>
+					  </tr>
+					  <tr>
+					    <td>{{financing_activities.0}}</td>
+					    <td>{{financing_activities.1}}</td>
+					    <td>{{financing_activities.2}}</td>
+					    <td>{{financing_activities.3}}</td>
+					  </tr>
+					</table>			
+				</div>
+			</div>
+			<!-- Cash Flow (Investing Activities) -->
+			<div class='col-sm-4 '>
+				<div class="table-header stat_titles">
+					<p>Cash Flow (Investing Activities)&emsp;<button type="button" id="cfi_modal" class="btn btn-info btn-sm" data-toggle="modal" data-target="#info_modal"><i class="fa fa-info " aria-hidden="true"></i></button></p>
+				</div>
+				<div>
+					<table class="table">
+					  <tr>
+					    <th>{{dates.0}}</th>
+					    <th>{{dates.1}}</th>
+					    <th>{{dates.2}}</th>
+					    <th>{{dates.3}}</th>
+					  </tr>
+					  <tr>
+					    <td>{{investment_activities.0}}</td>
+					    <td>{{investment_activities.1}}</td>
+					    <td>{{investment_activities.2}}</td>
+					    <td>{{investment_activities.3}}</td>
+					  </tr>
+					</table>			
+				</div>
+			</div>
+		</div>
+		{% else %}
+			<h2 class="text-align-center" style="color:white;">The data for this stock is currently unavailable.</h2>
+		{% endif %}
+		<br>
+</div>
+</div>
+<div class="row">
+	<div class="col-sm-12  main_box" id="tech_main_box"><br>
+		<div class="col-sm-12 pull-left">
+			<h2 class='text-align-center lead' style="color:yellow;">Insider Trading</h2><hr>
+			{% if not first_table_data.1 %}
+			<h2 class="text-align-center" style="color:yellow;">No data available at this time.</h2>
+			{%else%}
+			<p class="text-align-center lead" style="color:white;">Total # Insider Trades</p>
+			<div class="row">
+				<div class="col-sm-6">
+					<table class="table">
+						<tr>
+							<th></th>
+							<th>{{first_table_headers.1}}</th>
+							<th>{{first_table_headers.2}}</th>
+						</tr>
+						<tr>
+							<th>{{first_table_headers.3}}</th>
+							<td style="color:green;">{{first_table_data.0}}</td>
+							<td style="color:green;">{{first_table_data.1}}</td>
+						</tr>
+						<tr>
+							<th>{{first_table_headers.4}}</th>
+							<td style="color:red;">{{first_table_data.2}}</td>
+							<td style="color:red;">{{first_table_data.3}}</td>
+						</tr>
+					</table>
+				</div>
+				<div class="col-sm-6">
+					{% if first_table_data.0 > first_table_data.2%}
+						<p style="color:white;font-family:'Courier New',Courier,monospace;display:inline;">The company has been buying more than it has been selling recently. This may indicate that the company could be nearing some sort of breakthrough that would boost the stock's price.</p>
+					{% endif %}
+					{% if first_table_data.2 > first_table_data.0%}
+						<p style="color:white;font-family:'Courier New',Courier,monospace;display:inline;">The company has been selling more than it has been buying recently. This may indicate that the executives of the company have information that leads them to the conclusion that the company value may decrease in the future. The company could also just be doing it to make money selling shares.</p>
+					{% endif %}
+					{% if first_table_data.0 = first_table_data.2%}
+						<p style="color:white;font-family:'Courier New',Courier,monospace;display:inline;">There has been no substantial short-term insider trading with this company.</p>
+					{% endif %}
+					{% if first_table_data.1 > first_table_data.3%}
+						<p style="color:white;font-family:'Courier New',Courier,monospace;display:inline;">Over the long-term period of a year the company has been buying more often than it has been selling, indicating that executives are confident in the long-term growth of the company.</p>
+					{% endif %}
+					{% if first_table_data.3 > first_table_data.1%}
+						<p style="color:white;font-family:'Courier New',Courier,monospace;display:inline;">Over the long-term period of a year the company has been selling more often than it has been buying, indicating that executives of the company may be uncertain of the long-term success of the company. The company could also just be doing it to make money selling shares.</p>
+					{% endif %}
+					{% if first_table_data.1 == first_table_data.3%}
+						<p style="color:white;font-family:'Courier New',Courier,monospace;display:inline;">There has been no substantial long-term insider trading with this company.</p>
+					{% endif %}
+				</div>
+			</div><br><br>
+			<p class="text-align-center lead" style="color:white;">Total # Shares traded</p>
+			<div class="row">
+				<div class="col-sm-6">
+					<table class="table">
+						<tr>
+							<th></th>
+							<th>{{second_table_data.0}}</th>
+							<th>{{second_table_data.1}}</th>
+						</tr>
+						<tr>
+							<th>{{second_table_headers.1}}</th>
+							<td style="color:green;">{{second_table_data.2}}</td>
+							<td style="color:green;">{{second_table_data.3}}</td>
+						</tr>
+						<tr>
+							<th>{{second_table_headers.2}}</th>
+							<td style="color:red;">{{second_table_data.4}}</td>
+							<td style="color:red;">{{second_table_data.5}}</td>
+						</tr>
+					</table>
+				</div>
+				<div class="col-sm-6">
+					{% if second_table_data.2 > second_table_data.4 %}
+						<p style="color:white;font-family:'Courier New',Courier,monospace;display:inline;">The company has been buying more shares than it has been selling recently. This may indicate that the company could be nearing some sort of breakthrough that would boost the stock's price.</p>
+					{% endif %}
+					{% if second_table_data.4 > second_table_data.2 %}
+						<p style="color:white;font-family:'Courier New',Courier,monospace;display:inline;">The company has been selling more shares than it has been buying recently. This may indicate that the executives of the company have information that leads them to the conclusion that the company value may decrease in the future. The company could also just be doing it to make money selling shares.</p>
+					{% endif %}
+					{% if second_table_data.4 = second_table_data.2%}
+						<p style="color:white;font-family:'Courier New',Courier,monospace;display:inline;">There has been no substantial short-term insider trading with this company.</p>
+					{% endif %}
+					{% if second_table_data.2 > second_table_data.4 %}
+						<p style="color:white;font-family:'Courier New',Courier,monospace;display:inline;">Over the long-term period of a year the company has been buying more shares than it has been selling, indicating that executives are confident in the long-term growth of the company.</p>
+					{% endif %}
+					{% if second_table_data.4 > second_table_data.2 %}
+						<p style="color:white;font-family:'Courier New',Courier,monospace;display:inline;">Over the long-term period of a year the company has been selling more shares than it has been buying, indicating that executives of the company may be uncertain of the long-term success of the company. The company could also just be doing it to make money selling shares.</p>
+					{% endif %}
+					{% if second_table_data.4 == second_table_data.2%}
+						<p style="color:white;font-family:'Courier New',Courier,monospace;display:inline;">There has been no substantial long-term insider trading with this company.</p>
+					{% endif %}
+				</div>
+			</div>
+			{%endif%}
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col-sm-12  main_box" id="news_main_box">
+		<div class="col-sm-6 pull-left">
+			<h2 class='text-align-center lead' style="color:yellow;">Company Headlines</h2><hr>
+			{% if not co_article_combos.1 %}
+			<h2 class="text-align-center" style="color:white;">No articles available at this time.</h2>
+			{%else%}
+			<table class="table table-hover">
+			{% for key, value in co_article_combos %}
+				<tr class='clickable-row' data-href='{{value}}'><td class="headline_articles">{{key}}</td></tr>
+			{% endfor %}
+			</table>
+			{%endif%}
+		</div>
+		<div class="col-sm-6">
+			<h2 class='text-align-center lead' style="color:yellow;">Press Releases</h2><hr>
+			{% if not article_combos.1 %}
+			<h2 class="text-align-center" style="color:white;">No articles available at this time.</h2>
+			{%else%}
+			<table class="table table-hover">
+			{% for key, value in article_combos %}
+				<tr class='clickable-row' data-href='{{value}}'><td class="headline_articles">{{key}}</td></tr>
+			{% endfor %}
+			</table>
+			{%endif%}
+		</div>
+	</div>
+</div>
+{% endblock %}

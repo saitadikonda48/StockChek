@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block page_title %}Hotlist{% endblock %}
+{% block content %}
+<h1 class="text-align-center">Hotlist</h1><br>
+	<table class="table table-hover">
+		<tr>
+			<th>Symbol</th>
+			<th>&emsp;Name</th>
+			<th>&emsp;Price</th>
+			<th>Change</th>
+			<th>Rating (1-10)</th>
+		</tr>
+		{% for stock in stock_picks %}
+			<tr>
+				<td>{{stock.0}}</td>
+				<td>&emsp;{{stock.1}}</td>
+				{% if '+' in stock.3 %}
+					<td style="color:green;">&emsp;{{stock.2}}</td>
+					<td style="color:green;">&emsp;{{stock.3}}</td>
+				{% elif '-' in stock.3 %}
+					<td style="color:red;">&emsp;{{stock.2}}</td>
+					<td style="color:red;">&emsp;{{stock.3}}</td>
+				{% else %}
+					<td style="color:green;">&emsp;{{stock.2}}</td>
+					<td style="color:green">&emsp;{{stock.3}}</td>
+				{% endif %}
+				<td>&emsp;{{stock.4}}</td>
+			</tr>
+		{% endfor %}
+	</table>
+{% endblock %}

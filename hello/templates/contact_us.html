@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block page_title %}Contact Us{% endblock %}
+{% block content %}
+	<div class = 'col-sm-10 col-sm-offset-1'>
+    <h1 class="text-align-center">Contact Us</h1><hr>
+    <p class="text-align-center">If you would like to leave a message, then comment below with your information and we will get back to you as soon as we can.</p>
+    <h2 class="text-align-center" style="color:lightgreen;">{{confirmationText}}</h2>
+    <div class="col-md-8 col-md-offset-2"style="padding-top:2%;padding-bottom:2%;">
+	    <form method="POST" action="">{% csrf_token %}
+	    	<p class="text-align-center lead" style="font-size:1.5em;">Leave a Message</p><hr>
+	    	{{messageForm|crispy}}
+	    	<input class="btn btn-block btn-danger " type='submit' value='Submit'/>
+	    </form>
+	</div>
+  </div>
+{% endblock %}

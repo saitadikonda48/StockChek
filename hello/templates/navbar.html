@@ -1,0 +1,54 @@
+ <style>
+  {% block style %}
+    .navbar{
+      color:white;
+      background-color: #0047b3;
+      background-image: url("http://www.transparenttextures.com/patterns/cubes.png");
+    }
+    .navbar-default .navbar-nav>li>a {
+      color: white;
+    }
+    .navbar-default .navbar-brand {
+      color: white;
+    }
+    .navbar-default .navbar-brand:hover {
+      color: gold;
+    }
+    .navbar-default .navbar-nav>li>a:hover {
+      color: gold;
+    }
+    .navbar-default .navbar-toggle  {
+      background-color: blue;
+    }
+    .navbar-default .navbar-toggle:hover  {
+      background-color: black;
+    }
+    .navbar-default .navbar-toggle .icon-bar  {
+      background-color: white;
+    }
+  {% endblock %}
+  </style>
+
+<!-- Static navbar -->
+    <nav class="navbar navbar-default navbar-static-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">StockChek</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="{% url 'analyze_stock' %}">Analyze Stock</a></li>
+            <li><a href="{% url 'hotlist' %}">Hotlist</a></li>
+            <li><a href="{% url 'contact_us' %}">Contact Us</a></li>
+            <li><a href="{% url 'about_us' %}">About Us</a></li>
+          </ul>
+          
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
