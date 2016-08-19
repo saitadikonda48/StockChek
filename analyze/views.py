@@ -128,85 +128,97 @@ def analyze_stock(request):
 		article_combos = zip(article_names, article_links)
 	except:
 		pass
-	# Stock Data (Income Statement)
-	income_statement_url = "http://www.nasdaq.com/symbol/"+co_name+"/financials?query=income-statement" 
-	dates = []
-	income_statement_data = []
-	r = requests.get(income_statement_url)
-	soup = BeautifulSoup(r.content, "html.parser")
-	income_table_dates = soup.find('thead')
-	htmlfile = urllib.urlopen(income_statement_url)
-	htmltext = htmlfile.read()
-	regex = '<div id="qwidget_lastsale" class="qwidget-dollar">(.+?)</div>'
-	sec_regex = '<div id="qwidget_netchange" class="qwidget-cents qwidget-Red">(.+?)</div>'
-	third_regex = '<div id="qwidget_netchange" class="qwidget-cents qwidget-Green">(.+?)</div>'
-	pattern = re.compile(regex)
-	sec_pattern = re.compile(sec_regex)
-	third_pattern = re.compile(third_regex)
-	price = re.findall(pattern, htmltext)[0]
-	if len(re.findall(sec_pattern, htmltext)) != 0:
-		daily_change = re.findall(sec_pattern, htmltext)[0]
-		daily_change = "-"+str(daily_change)
-	elif len(re.findall(third_pattern, htmltext)) != 0:
-		daily_change = re.findall(third_pattern, htmltext)[0]
-		daily_change = "+"+str(daily_change)
-	else:
-		daily_change = "+0.00"
-	for th in income_table_dates.find_all('th')[2:]:
-		the_date = str(th.text)
-		if the_date is not "":
-			dates.append(the_date)
-	for td in soup.find_all('td',{"class":None}):
-		if '$' in td.text:
-			num = (td.text).replace("$","")
-			num = num.replace(",", "")
-			num = num.replace(")", "")
-			num = num.replace("(","-")
-			num = int(str(num))
-			income_statement_data.append(num)
-	# Stock Data (Cash Flow)
-	cash_flow_url = "http://www.nasdaq.com/symbol/"+co_name+"/financials?query=cash-flow" 
-	cash_flow_data = []
-	r = requests.get(cash_flow_url)
-	soup = BeautifulSoup(r.content, "html.parser")
-	for td in soup.find_all('td',{"class":None}):
-		if '$' in td.text:
-			num = (td.text).replace("$","")
-			num = num.replace(",", "")
-			num = num.replace(")", "")
-			num = num.replace("(","-")
-			num = str(num)
-			cash_flow_data.append(num)
-	# Balance Sheet Data
-	balance_sheet_url = "http://www.nasdaq.com/symbol/"+co_name+"/financials?query=balance-sheet" 
-	balance_sheet_data = []
-	r = requests.get(balance_sheet_url)
-	soup = BeautifulSoup(r.content, "html.parser")
-	for td in soup.find_all('td',{"class":None}):
-		if '$' in td.text:
-			num = (td.text).replace("$","")
-			num = num.replace(",", "")
-			num = num.replace(")", "")
-			num = num.replace("(","-")
-			num = int(str(num))
-			balance_sheet_data.append(num)
-	# Price/Earnings Ratio
-	pe_url = "https://ycharts.com/companies/"+str(stock_choice_made)+"/pe_ratio"
-	htmlfile = urllib.urlopen(pe_url)
-	htmltext = htmlfile.read()
-	regex = '<span id="pgNameVal">(.+?)</span>'
-	pattern = re.compile(regex)
-	pe_info = re.findall(pattern, htmltext)[0]
-	pe_stat,pe_date = str(pe_info).split(" for ")
-	# Price/Book Ratio
-	pb_url = "https://ycharts.com/companies/"+str(stock_choice_made)+"/price_to_book_value"
-	htmlfile = urllib.urlopen(pb_url)
-	htmltext = htmlfile.read()
-	regex = '<span id="pgNameVal">(.+?)</span>'
-	pattern = re.compile(regex)
-	pb_info = re.findall(pattern, htmltext)[0]
-	pb_stat,pb_date = str(pb_info).split(" for ")
-	if len(dates) == 4:
+	try:
+		# Stock Data (Income Statement)
+		income_statement_url = "http://www.nasdaq.com/symbol/"+co_name+"/financials?query=income-statement" 
+		dates = []
+		income_statement_data = []
+		r = requests.get(income_statement_url)
+		soup = BeautifulSoup(r.content, "html.parser")
+		income_table_dates = soup.find('thead')
+		htmlfile = urllib.urlopen(income_statement_url)
+		htmltext = htmlfile.read()
+		regex = '<div id="qwidget_lastsale" class="qwidget-dollar">(.+?)</div>'
+		sec_regex = '<div id="qwidget_netchange" class="qwidget-cents qwidget-Red">(.+?)</div>'
+		third_regex = '<div id="qwidget_netchange" class="qwidget-cents qwidget-Green">(.+?)</div>'
+		pattern = re.compile(regex)
+		sec_pattern = re.compile(sec_regex)
+		third_pattern = re.compile(third_regex)
+		price = re.findall(pattern, htmltext)[0]
+		if len(re.findall(sec_pattern, htmltext)) != 0:
+			daily_change = re.findall(sec_pattern, htmltext)[0]
+			daily_change = "-"+str(daily_change)
+		elif len(re.findall(third_pattern, htmltext)) != 0:
+			daily_change = re.findall(third_pattern, htmltext)[0]
+			daily_change = "+"+str(daily_change)
+		else:
+			daily_change = "+0.00"
+		for th in income_table_dates.find_all('th')[2:]:
+			the_date = str(th.text)
+			if the_date is not "":
+				dates.append(the_date)
+		for td in soup.find_all('td',{"class":None}):
+			if '$' in td.text:
+				num = (td.text).replace("$","")
+				num = num.replace(",", "")
+				num = num.replace(")", "")
+				num = num.replace("(","-")
+				num = int(str(num))
+				income_statement_data.append(num)
+	except:
+		pass
+	try:
+		# Stock Data (Cash Flow)
+		cash_flow_url = "http://www.nasdaq.com/symbol/"+co_name+"/financials?query=cash-flow" 
+		cash_flow_data = []
+		r = requests.get(cash_flow_url)
+		soup = BeautifulSoup(r.content, "html.parser")
+		for td in soup.find_all('td',{"class":None}):
+			if '$' in td.text:
+				num = (td.text).replace("$","")
+				num = num.replace(",", "")
+				num = num.replace(")", "")
+				num = num.replace("(","-")
+				num = str(num)
+				cash_flow_data.append(num)
+	except:
+		pass
+	try:
+		# Balance Sheet Data
+		balance_sheet_url = "http://www.nasdaq.com/symbol/"+co_name+"/financials?query=balance-sheet" 
+		balance_sheet_data = []
+		r = requests.get(balance_sheet_url)
+		soup = BeautifulSoup(r.content, "html.parser")
+		for td in soup.find_all('td',{"class":None}):
+			if '$' in td.text:
+				num = (td.text).replace("$","")
+				num = num.replace(",", "")
+				num = num.replace(")", "")
+				num = num.replace("(","-")
+				num = int(str(num))
+				balance_sheet_data.append(num)
+	except:
+		pass
+	try:
+		# Price/Earnings Ratio
+		pe_url = "https://ycharts.com/companies/"+str(stock_choice_made)+"/pe_ratio"
+		htmlfile = urllib.urlopen(pe_url)
+		htmltext = htmlfile.read()
+		regex = '<span id="pgNameVal">(.+?)</span>'
+		pattern = re.compile(regex)
+		pe_info = re.findall(pattern, htmltext)[0]
+		pe_stat,pe_date = str(pe_info).split(" for ")
+		# Price/Book Ratio
+		pb_url = "https://ycharts.com/companies/"+str(stock_choice_made)+"/price_to_book_value"
+		htmlfile = urllib.urlopen(pb_url)
+		htmltext = htmlfile.read()
+		regex = '<span id="pgNameVal">(.+?)</span>'
+		pattern = re.compile(regex)
+		pb_info = re.findall(pattern, htmltext)[0]
+		pb_stat,pb_date = str(pb_info).split(" for ")
+	except:
+		pass
+	try:
 		# Gross Margin Ratio
 		gross_margin_ratios.append(round((1.0*income_statement_data[8]/income_statement_data[0])*100,1))
 		gross_margin_ratios.append(round((1.0*income_statement_data[9]/income_statement_data[1])*100,1))
@@ -323,7 +335,8 @@ def analyze_stock(request):
 		return_on_equities.append(round(100.0*income_statement_data[65]/balance_sheet_data[113],1))
 		return_on_equities.append(round(100.0*income_statement_data[66]/balance_sheet_data[114],1))
 		return_on_equities.append(round(100.0*income_statement_data[67]/balance_sheet_data[115],1))
-
+	except:
+		pass
 	# Pick your stock
 	stockChoiceForm = StockChoiceForm(request.POST or None )
 	if stockChoiceForm.is_valid():
