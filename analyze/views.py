@@ -60,68 +60,74 @@ def analyze_stock(request):
 		competitors.pop()
 	except:
 		pass
-	# Insider Trading
-	insider_url = "http://www.nasdaq.com/symbol/"+co_name+"/insider-trades"
-	htmlfile = urllib.urlopen(insider_url)
-	htmltext = htmlfile.read()
-	r = requests.get(insider_url)
-	soup = BeautifulSoup(r.content, "html.parser")
-	insider_divs = soup.find_all('div',{'class':'infoTable'})
-	first_table_rows = insider_divs[0].find_all('tr')
-	for tr in first_table_rows:
-		# table headers
-		headers = tr.find_all('th')
-		for header in headers:
-			first_table_headers.append(header.text)
-		# table data
-		data = tr.find_all('td')
-		for datum in data:
-			first_table_data.append(datum.text)
-	second_table_rows = insider_divs[1].find_all('tr')
-	for tr in second_table_rows:
-		# table headers
-		headers = tr.find_all('th')
-		for header in headers:
-			second_table_headers.append(header.text)
-		# table data
-		data = tr.find_all('td')
-		for datum in data:
-			second_table_data.append(datum.text)
-	# Company Headines
-	co_source_url = "http://www.nasdaq.com/symbol/"+co_name+"/news-headlines"
-	htmlfile = urllib.urlopen(co_source_url)
-	htmltext = htmlfile.read()
-	r = requests.get(co_source_url)
-	soup = BeautifulSoup(r.content, "html.parser")
-	articles = soup.find_all('div',{'class':'news-headlines'})[0]
-	article_headlines = articles.find_all('a')
-	counter = 1
-	for name in article_headlines:
-		counter = counter + 1
-		if counter%2 == 0:
-			co_article_links.append(name.attrs['href'])
-			co_article_names.append(name.text)
-		else:
-			pass
-	if len(co_article_links) > 10:
-		co_article_links = co_article_links[:10]
-		co_article_names = co_article_names[:10]
-	co_article_combos = zip(co_article_names, co_article_links)
-	# Press Releases
-	source_url = "http://www.nasdaq.com/symbol/"+co_name+"/press-releases"
-	htmlfile = urllib.urlopen(source_url)
-	htmltext = htmlfile.read()
-	r = requests.get(source_url)
-	soup = BeautifulSoup(r.content, "html.parser")
-	articles = soup.find_all('div',{'class':'news-headlines'})[0]
-	article_headlines = articles.find_all('a')
-	for name in article_headlines:
-		article_links.append(name.attrs['href'])
-		article_names.append(name.text)
-	if len(article_links) > 10:
-		article_links = article_links[:10]
-		article_names = article_names[:10]
-	article_combos = zip(article_names, article_links)
+	try:
+		# Insider Trading
+		insider_url = "http://www.nasdaq.com/symbol/"+co_name+"/insider-trades"
+		htmlfile = urllib.urlopen(insider_url)
+		htmltext = htmlfile.read()
+		r = requests.get(insider_url)
+		soup = BeautifulSoup(r.content, "html.parser")
+		insider_divs = soup.find_all('div',{'class':'infoTable'})
+		first_table_rows = insider_divs[0].find_all('tr')
+		for tr in first_table_rows:
+			# table headers
+			headers = tr.find_all('th')
+			for header in headers:
+				first_table_headers.append(header.text)
+			# table data
+			data = tr.find_all('td')
+			for datum in data:
+				first_table_data.append(datum.text)
+		second_table_rows = insider_divs[1].find_all('tr')
+		for tr in second_table_rows:
+			# table headers
+			headers = tr.find_all('th')
+			for header in headers:
+				second_table_headers.append(header.text)
+			# table data
+			data = tr.find_all('td')
+			for datum in data:
+				second_table_data.append(datum.text)
+	except:
+		pass
+	try:
+		# Company Headines
+		co_source_url = "http://www.nasdaq.com/symbol/"+co_name+"/news-headlines"
+		htmlfile = urllib.urlopen(co_source_url)
+		htmltext = htmlfile.read()
+		r = requests.get(co_source_url)
+		soup = BeautifulSoup(r.content, "html.parser")
+		articles = soup.find_all('div',{'class':'news-headlines'})[0]
+		article_headlines = articles.find_all('a')
+		counter = 1
+		for name in article_headlines:
+			counter = counter + 1
+			if counter%2 == 0:
+				co_article_links.append(name.attrs['href'])
+				co_article_names.append(name.text)
+			else:
+				pass
+		if len(co_article_links) > 10:
+			co_article_links = co_article_links[:10]
+			co_article_names = co_article_names[:10]
+		co_article_combos = zip(co_article_names, co_article_links)
+		# Press Releases
+		source_url = "http://www.nasdaq.com/symbol/"+co_name+"/press-releases"
+		htmlfile = urllib.urlopen(source_url)
+		htmltext = htmlfile.read()
+		r = requests.get(source_url)
+		soup = BeautifulSoup(r.content, "html.parser")
+		articles = soup.find_all('div',{'class':'news-headlines'})[0]
+		article_headlines = articles.find_all('a')
+		for name in article_headlines:
+			article_links.append(name.attrs['href'])
+			article_names.append(name.text)
+		if len(article_links) > 10:
+			article_links = article_links[:10]
+			article_names = article_names[:10]
+		article_combos = zip(article_names, article_links)
+	except:
+		pass
 	# Stock Data (Income Statement)
 	income_statement_url = "http://www.nasdaq.com/symbol/"+co_name+"/financials?query=income-statement" 
 	dates = []
